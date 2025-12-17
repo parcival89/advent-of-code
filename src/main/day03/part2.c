@@ -4,27 +4,6 @@
 
 #define MAX_LINE_LENGTH 1024
 
-void find_max_sequence(int *digits, int count, int start, int depth, long long current, long long *max_number) {
-    // Base case: we've selected 12 digits
-    if (depth == 12) {
-        if (current > *max_number) {
-            *max_number = current;
-        }
-        return;
-    }
-    
-    // No more digits to select
-    if (start >= count) {
-        return;
-    }
-    
-    // Try including the current digit
-    find_max_sequence(digits, count, start + 1, depth + 1, current * 10 + digits[start], max_number);
-    
-    // Try skipping the current digit
-    find_max_sequence(digits, count, start + 1, depth, current, max_number);
-}
-
 long long process_line(const char *line) {
     int digits[MAX_LINE_LENGTH];
     int count = 0;
@@ -41,9 +20,39 @@ long long process_line(const char *line) {
         return 0;
     }
     
-    // Find the highest possible 12-digit number
+    // Greedy approach: select 12 digits that form the maximum number
+    int result[12];
+    int result_count = 0;
+    int start = 0;
+    
+    // For each position in our 12-digit result
+    for (int pos = 0; pos < 12; pos++) {
+        int needed = 12 - pos;  // digits still needed (including current)
+        int available = count - start;  // digits still available
+        
+        // Find the maximum digit in the range where we can still complete the sequence
+        int max_digit = -1;
+        int max_index = -1;
+        
+        // We can look ahead at most (available - needed + 1) positions
+        int search_limit = start + (available - needed + 1);
+        
+        for (int i = start; i < search_limit; i++) {
+            if (digits[i] > max_digit) {
+                max_digit = digits[i];
+                max_index = i;
+            }
+        }
+        
+        result[result_count++] = max_digit;
+        start = max_index + 1;
+    }
+    
+    // Convert result array to a number
     long long max_number = 0;
-    find_max_sequence(digits, count, 0, 0, 0, &max_number);
+    for (int i = 0; i < 12; i++) {
+        max_number = max_number * 10 + result[i];
+    }
     
     return max_number;
 }
