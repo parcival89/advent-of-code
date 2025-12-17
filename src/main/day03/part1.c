@@ -1,53 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #define MAX_LINE_LENGTH 1024
 
-// Structure to hold a digit and its position
-typedef struct {
-    int value;
-    int position;
-} Digit;
-
 int process_line(const char *line) {
-    Digit highest = {INT_MIN, -1};
-    Digit second_highest = {INT_MIN, -1};
-    int pos = 0;
+    int digits[MAX_LINE_LENGTH];
+    int count = 0;
     
-    // Iterate through each character in the line
+    // Extract all digits from the line
     for (int i = 0; line[i] != '\0' && line[i] != '\n'; i++) {
         if (line[i] >= '0' && line[i] <= '9') {
-            int digit = line[i] - '0';
-            
-            // Update highest and second highest
-            if (digit > highest.value) {
-                second_highest = highest;
-                highest.value = digit;
-                highest.position = pos;
-            } else if (digit > second_highest.value) {
-                second_highest.value = digit;
-                second_highest.position = pos;
-            }
-            pos++;
+            digits[count++] = line[i] - '0';
         }
     }
     
-    // Combine the two highest in order they appear in the line
-    if (highest.position == -1 || second_highest.position == -1) {
-        return 0; // Not enough digits found
+    // Need at least 2 digits
+    if (count < 2) {
+        return 0;
     }
     
-    // Always combine in the order they appear (left to right)
-    int result;
-    if (highest.position < second_highest.position) {
-        result = highest.value * 10 + second_highest.value;
-    } else {
-        result = second_highest.value * 10 + highest.value;
+    // Find the highest possible two-digit number
+    // by checking all pairs (i, j) where i < j
+    int max_number = 0;
+    
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            int two_digit = digits[i] * 10 + digits[j];
+            if (two_digit > max_number) {
+                max_number = two_digit;
+            }
+        }
     }
     
-    return result;
+    return max_number;
 }
 
 int main(int argc, char *argv[]) {
@@ -72,7 +58,7 @@ int main(int argc, char *argv[]) {
     while (fgets(line, sizeof(line), file) != NULL) {
         int line_result = process_line(line);
         printf("Line: %s", line);
-        printf("Combined value: %d\n\n", line_result);
+        printf("Highest two-digit number: %d\n\n", line_result);
         total_sum += line_result;
     }
     
