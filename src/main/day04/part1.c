@@ -7,11 +7,11 @@
 
 int count_adjacent(char grid[][MAX_COLS], int rows, int cols, int r, int c) {
     int count = 0;
-    // Check only 4 directions: up, down, left, right (no diagonals)
-    int dr[] = {-1, 0, 0, 1};
-    int dc[] = {0, -1, 1, 0};
+    // Check all 8 directions: up, down, left, right, and 4 diagonals
+    int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+    int dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         int nr = r + dr[i];
         int nc = c + dc[i];
         
@@ -68,20 +68,20 @@ int main(int argc, char *argv[]) {
     
     printf("Grid size: %d rows x %d cols\n", rows, cols);
     
-    // Count '@' symbols with 4 or fewer adjacent '@' symbols
+    // Count '@' symbols with fewer than 4 adjacent '@' symbols
     int count = 0;
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols && grid[r][c] != '\0'; c++) {
             if (grid[r][c] == '@') {
                 int adjacent = count_adjacent(grid, rows, cols, r, c);
-                if (adjacent <= 4) {
+                if (adjacent < 4) {
                     count++;
                 }
             }
         }
     }
     
-    printf("Number of '@' symbols with 4 or fewer adjacent '@' symbols: %d\n", count);
+    printf("Number of '@' symbols with fewer than 4 adjacent '@' symbols: %d\n", count);
     
     return 0;
 }
