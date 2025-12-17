@@ -7,11 +7,11 @@
 
 int count_adjacent(char grid[][MAX_COLS], int rows, int cols, int r, int c) {
     int count = 0;
-    // Check all 8 directions: up, down, left, right, and 4 diagonals
-    int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
-    int dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+    // Check only 4 directions: up, down, left, right (no diagonals)
+    int dr[] = {-1, 0, 0, 1};
+    int dc[] = {0, -1, 1, 0};
     
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 4; i++) {
         int nr = r + dr[i];
         int nc = c + dc[i];
         
